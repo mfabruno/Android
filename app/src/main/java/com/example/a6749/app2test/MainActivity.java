@@ -1,6 +1,7 @@
 package com.example.a6749.app2test;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> OdometerListViewValues = new ArrayList<String>();
     ArrayList<NumberPicker> NumberPickersList = new ArrayList<NumberPicker>();
 
-    private Integer ActiveCarId = 1;
+    private Integer ActiveCarId = -1;
 
     private DBHelper CarsDatabase = new DBHelper(this);
 
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -55,43 +57,49 @@ public class MainActivity extends AppCompatActivity {
         ConfigureVisualElements();
 
 
-        final Button button = findViewById(R.id.button);
+        final Button button = findViewById(R.id.GoToOdometerActivity);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
-                // Code here executes on main thread after user presses button
-                if (ChangeValueKms())
-                    UpdateList();
+                //setContentView(R.layout.activity_odometer);
+                ChangeContext();
             }
         });
 
 
-        OdometerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng)
-            {
-                String selectedFromList = (String) (OdometerListView.getItemAtPosition(myItemInt));
-                selectedFromList += "km";
-            }
-        });
+        //OdometerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        //    public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng)
+        //    {
+        //        String selectedFromList = (String) (OdometerListView.getItemAtPosition(myItemInt));
+        //        selectedFromList += "km";
+        //    }
+        //});
+//
+        //Integer firstTime=AppGetFirstTimeRun();
+        //if (firstTime == SharedPreferences_Key_FirstTime_True)
+        //{
+        //    //createCar
+        //}
+        //else if (firstTime == SharedPreferences_Key_FirstTime_Updated)
+        //{
+        //    //update:
+        //    //tables,values...
+        //}
+//
+        //int activeCar = GetActiveCar();
+        //if (activeCar < 1)
+        //{
+        //    activeCar = LaunchCreateCar();
+        //    SetActiveCar(activeCar);
+        //}
 
-        Integer firstTime=AppGetFirstTimeRun();
-        if (firstTime == SharedPreferences_Key_FirstTime_True)
-        {
-            //createCar
-        }
-        else if (firstTime == SharedPreferences_Key_FirstTime_Updated)
-        {
-            //update:
-            //tables,values...
-        }
+    }
 
-        int activeCar = GetActiveCar();
-        if (activeCar < 1)
-        {
-            activeCar = LaunchCreateCar();
-            SetActiveCar(activeCar);
-        }
+    private void ChangeContext()
+    {
 
+        Intent intent = new Intent(this, OdometerActivity.class);
+        startActivity(intent);
     }
 
 
@@ -244,12 +252,13 @@ public class MainActivity extends AppCompatActivity {
     private void ConfigureVisualElements()
     {
 
-        OdometerListView = findViewById(R.id.listView);
+        Spinner spinner = findViewById(R.id.ChooseCarSpinner);
 
-        ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, OdometerListViewValues);
-        OdometerListView.setAdapter(adapter);
+        List<String> list = CarsDatabase.GetCars();
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(dataAdapter);
 
-        ConfigNumberPickers();
 
     }
 
