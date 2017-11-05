@@ -1,4 +1,4 @@
-package com.example.a6749.app2test;
+package com.example.a6749.app2test.Classes;
 
 /**
  * Created by 6749 on 30/10/2017.

@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">CarRegist</string>
     <string name="action_settings">Settings</string>
+    <string name="activity_car_create_createCarFuelType_hint">Fuel Type</string>
+
+    <string-array name="FuelTypes">
+        <item>Gasoline</item>
+        <item>Diesel</item>
+        <item>Natural gas</item>
+        <item>Biodiesel</item>
+        <item>Hydrogen</item>
+        <item>Electric</item>
+    </string-array>
 </resources>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.a6749.app2test.Activities.OdometerActivity"
+    tools:showIn="@layout/activity_car_create">
+
+    <!--
+            <LinearLayout
+
+                android:id="@+id/createBlock2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <EditText
+                    android:id="@+id/createCarName"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="Car name" />
+
+
+                <EditText
+                    android:id="@+id/createCarDate"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+
+
+                    android:ems="10"
+                    android:inputType="date" />
+
+                <EditText
+                    android:id="@+id/createCarFuelCapacity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="numberDecimal" />
+
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/createCarAdd"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_below="@id/createBlock2"
+                android:layout_centerHorizontal="true"
+
+                android:text="Add Car!"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+
+                />
+    -->
+    <LinearLayout
+        android:id="@+id/createCarLineartLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="56dp">
+
+
+        <!-- Name Label -->
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/createCarNameTextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:nextFocusDown="@+id/createCarFuelType">
+
+
+            <EditText
+                android:id="@+id/createCarName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Name"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!-- car fuel Label -->
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp">
+
+            <Spinner
+                android:id="@+id/createCarFuelType"
+                style="@android:style/Widget.Material.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:spinnerMode="dialog"
+                android:hint="Fuel Type"
+                android:autofillHints="Fuel "
+                android:prompt="@string/activity_car_create_createCarFuelType_hint"
+                android:tooltipText="Fuel"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <!-- car fuel Label -->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp">
+
+            <EditText
+                android:id="@+id/createCarFuelCapacity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Fuel Capacity"
+                android:inputType="numberDecimal" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!-- Date Label -->
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/createCarDateTextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp">
+
+            <EditText
+                android:id="@+id/createCarDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:hint="Date"
+                android:inputType="none" />
+        </android.support.design.widget.TextInputLayout>
+
+
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/createCarAddButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:padding="12dp"
+            android:text="Add car" />
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>

@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">
@@ -21,6 +21,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".Activities.OdometerActivity"
+            android:parentActivityName=".Activities.MainActivity" >
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".Activities.CarCreateActivity"
+            android:parentActivityName=".Activities.MainActivity" >
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

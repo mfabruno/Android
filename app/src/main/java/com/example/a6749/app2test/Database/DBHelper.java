@@ -1,40 +1,50 @@
-package com.example.a6749.app2test;
+package com.example.a6749.app2test.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.example.a6749.app2test.Classes.Car;
+import com.example.a6749.app2test.Classes.FillUp;
+import com.example.a6749.app2test.Classes.Odometer;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import static java.time.LocalTime.now;
 
 
 public class DBHelper extends SQLiteOpenHelper {
 
+    //region Overrides SQLiteOpenHelper
+
     public static final String DATABASE_NAME = "CarRegist.db";
     private static final Integer DATABASE_VERSION = 1;
 
-    //region Overrides SQLiteOpenHelper
+    // Use a Singleton to Instantiate the SQLiteOpenHelper
+    private static DBHelper sInstance;
 
-    public static final String DATABASE_PATTERN_DATE_ALL = "yyyy-MM-dd";//"yyyy-MM-dd-HH:mm:ss";
-    public static final DateFormat DATABASE_DATEFORMAT_DATE_ALL = new SimpleDateFormat(DATABASE_PATTERN_DATE_ALL);
+    public static synchronized DBHelper GetInstance(Context context)
+    {
 
-    public static final String DATABASE_PATTERN_YEAR = "yyyy";
-    public static final DateFormat DATABASE_DATEFORMAT_YEAR = new SimpleDateFormat(DATABASE_PATTERN_YEAR);
+        // Use the application context, which will ensure that you
+        // don't accidentally leak an Activity's context.
+        // See this article for more information: http://bit.ly/6LRzfx
+        if (sInstance == null)
+        {
+            sInstance = new DBHelper(context.getApplicationContext());
+        }
 
-    public static final String DATABASE_PATTERN_MONTH = "MM";
-    public static final DateFormat DATABASE_DATEFORMAT_MONTH = new SimpleDateFormat(DATABASE_PATTERN_MONTH);
+        return sInstance;
+    }
 
-    //region Overrides SQLiteOpenHelper
-
-    public DBHelper(Context context)
+    private DBHelper(Context context)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -62,6 +72,24 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
     //endregion
+
+    //Region Utils
+
+    //Region Time
+
+    public static final String DATABASE_PATTERN_DATE_ALL = "yyyy-MM-dd";//"yyyy-MM-dd-HH:mm:ss";
+    public static final DateFormat DATABASE_DATEFORMAT_DATE_ALL = new SimpleDateFormat(DATABASE_PATTERN_DATE_ALL);
+
+    public static final String DATABASE_PATTERN_YEAR = "yyyy";
+    public static final DateFormat DATABASE_DATEFORMAT_YEAR = new SimpleDateFormat(DATABASE_PATTERN_YEAR);
+
+    public static final String DATABASE_PATTERN_MONTH = "MM";
+    public static final DateFormat DATABASE_DATEFORMAT_MONTH = new SimpleDateFormat(DATABASE_PATTERN_MONTH);
+
+    //endregion
+
+    //endregion
+
 
     //region CAR
 
@@ -96,7 +124,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     //region Methods
 
-    public boolean CarInsertRegist(String name, String date, String fuelType, String fuelCapacity)
+    public long CarInsertRegist(String name, String date, String fuelType, String fuelCapacity)
     {
 
         ContentValues contentValues = new ContentValues();
@@ -106,8 +134,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(TABLE_CAR_COLUMN_FUEL_CAPACITY, fuelCapacity);
 
         SQLiteDatabase db = this.getWritableDatabase();
-        boolean insertedCorrectly = db.insert(TABLE_CAR_NAME, null, contentValues) != -1;
-        return insertedCorrectly;
+        return db.insert(TABLE_CAR_NAME, null, contentValues);
 
     }
 
@@ -119,25 +146,96 @@ public class DBHelper extends SQLiteOpenHelper {
         try
         {
             StringBuilder query = new StringBuilder();
-            query.append(" SELECT * FROM " + TABLE_CAR_COLUMN_NAME);
+            query.append(" SELECT * FROM " + TABLE_CAR_NAME);
 
             cursor = db.rawQuery(query.toString(), null);
 
             //boolean hasCars = cursor != null && cursor.getInt(TABLE_CAR_COLUMN_ID_INDEX) > 0;
-            boolean hasCars = cursor != null ;
-             hasCars = cursor != null && cursor.getInt(TABLE_CAR_COLUMN_ID_INDEX) > 0;
+            boolean hasCars = cursor != null && cursor.getInt(TABLE_CAR_COLUMN_ID_INDEX) > 0;
 
 
             return hasCars;
 
-        } catch (SQLiteException e)
-        {
-            return false; //FirstTime doest exist
         } finally
         {
             if (cursor != null && !cursor.isClosed())
                 cursor.close();
         }
+    }
+
+    public List<String> GetAllCars()
+    {
+
+        List<String> list = new ArrayList<String>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        try
+        {
+
+            StringBuilder query = new StringBuilder();
+            query.append(" SELECT * FROM " + TABLE_CAR_NAME);
+
+            cursor = db.rawQuery(query.toString(), null);
+
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast())
+            {
+                //String string = DatabaseUtils.dumpCursorToString(cursor);
+                list.add(cursor.getString(TABLE_CAR_COLUMN_NAME_INDEX));
+
+                cursor.moveToNext();
+            }
+
+            return list;
+        } finally
+        {
+            if (cursor != null && !cursor.isClosed())
+                cursor.close();
+        }
+
+    }
+
+    public Car CarGetCar(Integer id_car)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        try
+        {
+
+            StringBuilder query = new StringBuilder();
+            query.append(" SELECT * FROM " + TABLE_CAR_NAME);
+            query.append(" WHERE " + TABLE_CAR_COLUMN_ID + "=").append(id_car);
+
+            cursor = db.rawQuery(query.toString(), null);
+            cursor.moveToFirst();
+            if (!cursor.isAfterLast())
+            {
+                //String string = DatabaseUtils.dumpCursorToString(cursor);
+                Car car = CursorToCar(cursor);
+
+                return car;
+            }
+
+            return null;
+        } finally
+        {
+            if (cursor != null && !cursor.isClosed())
+                cursor.close();
+        }
+    }
+
+    private Car CursorToCar(Cursor cursor)
+    {
+
+        Car car = new Car();
+        car.Id = cursor.getInt(TABLE_CAR_COLUMN_ID_INDEX);
+        car.CarName = cursor.getInt(TABLE_CAR_COLUMN_NAME_INDEX);
+        car.CarDate = cursor.getString(TABLE_CAR_COLUMN_DATE_INDEX);
+        car.CarFuelCapacity = cursor.getString(TABLE_CAR_COLUMN_FUEL_CAPACITY_INDEX);
+        car.CarFuelType = cursor.getString(TABLE_CAR_COLUMN_FUEL_TYPE_INDEX);
+
+        return car;
+
     }
 
     //endregion
@@ -216,7 +314,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         StringBuilder query = new StringBuilder();
         query.append(" SELECT * FROM " + TABLE_ODOMETER_NAME);
-        query.append(" WHERE " + TABLE_ODOMETER_COLUMN_ID_CAR + "=" + id_car);
+        query.append(" WHERE " + TABLE_ODOMETER_COLUMN_ID_CAR + "=").append(id_car);
         query.append(" ORDER BY " + TABLE_ODOMETER_COLUMN_ID + " DESC;");
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -252,7 +350,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             StringBuilder query = new StringBuilder();
             query.append(" SELECT * FROM " + TABLE_ODOMETER_NAME);
-            query.append(" WHERE " + TABLE_ODOMETER_COLUMN_ID_CAR + "=" + id_car);
+            query.append(" WHERE " + TABLE_ODOMETER_COLUMN_ID_CAR + "=").append(id_car);
             query.append(" ORDER BY " + TABLE_ODOMETER_COLUMN_ID + " DESC;");
 
             cursor = db.rawQuery(query.toString(), null);
@@ -274,6 +372,39 @@ public class DBHelper extends SQLiteOpenHelper {
                 cursor.close();
         }
 
+    }
+
+    public List<String> OdometerGetAllValuesForCar(Integer id_car)
+    {
+
+        List<String> list = new ArrayList<String>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        try
+        {
+
+            StringBuilder query = new StringBuilder();
+            query.append(" SELECT * FROM " + TABLE_ODOMETER_NAME);
+            query.append(" WHERE " + TABLE_ODOMETER_COLUMN_ID_CAR + "=").append(id_car);
+            query.append(" ORDER BY " + TABLE_ODOMETER_COLUMN_ID + " DESC;");
+
+            cursor = db.rawQuery(query.toString(), null);
+
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast())
+            {
+                //String string = DatabaseUtils.dumpCursorToString(cursor);
+                list.add(cursor.getString(TABLE_ODOMETER_COLUMN_VALUE_KM_INDEX));
+
+                cursor.moveToNext();
+            }
+
+            return list;
+        } finally
+        {
+            if (cursor != null && !cursor.isClosed())
+                cursor.close();
+        }
     }
 
     private Odometer CursorToOdometer(Cursor cursor)
@@ -375,6 +506,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return fillUp;
 
     }
+
 
     //endregion
 
